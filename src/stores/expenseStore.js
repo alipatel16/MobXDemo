@@ -1,9 +1,9 @@
-import { observable, action } from "mobx";
+import { observable, action, reaction, computed } from "mobx";
 
 class ExpenseStore {
   @observable expenseList = [];
 
-  @action addExpense(itemsObj) {
+  @action addExpense(itemsObj) { 
     this.expenseList.push(itemsObj);
   }
 
@@ -27,6 +27,21 @@ class ExpenseStore {
 
   @action getItems() {
     return this.expenseList;
+  }
+
+  // Computed property: total expenses
+  @computed get totalExpenses() {
+    return this.expenseList.reduce((total, item) => total + item.amount, 0);
+  }
+
+  constructor() {
+    // Reaction example: log total expenses whenever it changes
+    reaction(
+      () => this.totalExpenses,
+      (totalExpenses) => {
+        console.log("Total expenses changed:", totalExpenses);
+      }
+    );
   }
 }
 
